@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metode Pembayaran - Petshop</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(169, 220, 234, 0.3), rgba(172, 205, 244, 0.3)), 
+                        url('Walpaper.png') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border 0.3s ease-in-out;
+        }
+
+        select:hover {
+            border: 1px solid #10b7e1;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            background: #10b7e1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+            animation: bounce 1s infinite;
+        }
+
+        button:hover {
+            background: #00cbe6;
+            transform: scale(1.05);
+            box-shadow: 0px 0px 10px rgba(0, 203, 230, 0.8);
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .payment-images {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .payment-images img {
+            width: 120px;
+            height: auto;
+            display: none;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            animation: fadeInScale 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Pilih Metode Pembayaran</h2>
+        <p class="total">Total yang harus dibayar: <span id="total-price">Rp 0</span></p>
+
+        <select id="payment-method" onchange="updatePaymentImages()">
+            <option value="" selected disabled>Pilih Metode Pembayaran</option>
+            <option value="Transfer Bank">Transfer Bank</option>
+            <option value="E-Wallet">E-Wallet</option>
+            <option value="COD">Cash on Delivery (COD)</option>
+        </select>
+
+        <div class="payment-images" id="payment-container"></div>
+
+        <button onclick="confirmPayment()">Konfirmasi Pembayaran</button>
+    </div>
+
+    <script>
+        function loadTotalPrice() {
+            let totalHarga = localStorage.getItem("totalPembayaran");
+            if (totalHarga) {
+                document.getElementById("total-price").innerText = totalHarga;
+            } else {
+                document.getElementById("total-price").innerText = "Rp 0";
+            }
+        }
+
+        function updatePaymentImages() {
+            let method = document.getElementById("payment-method").value;
+            let container = document.getElementById("payment-container");
+            container.innerHTML = ""; 
+
+            let paymentImages = {
+                "Transfer Bank": [" Bri.jpg ", " Mandiri.jpg ", "BNI.jpg"],
+                "E-Wallet": ["Dana.jpg", "OVO.jpg"],
+                "COD": ["COD.jpg"]
+            };
+
+            if (method in paymentImages) {
+                paymentImages[method].forEach(image => {
+                    let img = document.createElement("img");
+                    img.src = image;
+                    img.alt = method;
+                    img.style.display = "block";
+                    container.appendChild(img);
+                });
+            }
+        }
+
+        function confirmPayment() {
+            let method = document.getElementById("payment-method").value;
+            let totalHarga = localStorage.getItem("totalPembayaran");
+
+            if (!method) {
+                alert("Silakan pilih metode pembayaran terlebih dahulu!");
+                return;
+            }
+
+            alert(`Pembayaran Berhasil!\nMetode: ${method}\nTotal: ${totalHarga}`);
+
+            localStorage.removeItem("totalPembayaran");
+            window.location.href = "INDEX.HTML";
+        }
+
+        window.onload = loadTotalPrice;
+    </script>
+</body>
+</html>

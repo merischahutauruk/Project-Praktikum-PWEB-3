@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Barang - Bakery House</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url('Walpaper.png') no-repeat center center fixed;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th { background: #10b7e1; color: white; }
+        button {
+            padding: 10px;
+            background: #10b7e1;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            border-radius: 5px;
+        }
+        button:hover { background: #007bb5; }
+        img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            th { display: none; }
+            tr {
+                margin-bottom: 10px;
+                border: 1px solid #ddd;
+                padding: 10px;
+            }
+            td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Daftar Menu Bakery House</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pilih</th>
+                    <th>No</th>
+                    <th>Nama Barang</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+                    <th>Gambar</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="product-list"></tbody>
+        </table>
+        <h3>Total Pembayaran: <span id="total-price">Rp 0</span></h3>
+        <button id="goToPayment">💳 Lanjut ke Pembayaran</button>
+    </div>
+
+    <script>
+        let products = [
+            { id: 1, name: "Butter Cake", price: 100000, quantity: 10, img: "Butter cake.png" },
+            { id: 2, name: "Pound Cake", price: 70000, quantity: 5, img: "Pound cake.png" },
+            { id: 3, name: "Sponge Cake", price: 50000, quantity: 3, img: "Sponge cake.png" },
+            { id: 4, name: "Biscuit Cake", price: 50000, quantity: 1, img: "Biscuit cake.png" }
+        ];
+
+        function loadProducts() {
+            let table = document.getElementById("product-list");
+            table.innerHTML = "";
+            products.forEach((item, index) => {
+                let row = `<tr>
+                    <td><input type='checkbox' onchange='calculateTotal()'></td>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>Rp ${item.price.toLocaleString()}</td>
+                    <td>${item.quantity}</td>
+                    <td><img src="${item.img}" alt="${item.name}"></td>
+                    <td>
+                        <button onclick="editItem(${index})">Edit</button>
+                        <button onclick="deleteItem(${index})">Hapus</button>
+                    </td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+        }
+
+        function calculateTotal() {
+            let checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+            let total = 0;
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    total += products[index].price;
+                }
+            });
+            document.getElementById("total-price").innerText = "Rp " + total.toLocaleString();
+        }
+
+        function deleteItem(index) {
+            products.splice(index, 1);
+            loadProducts();
+        }
+
+        function editItem(index) {
+            let newName = prompt("Edit Nama Barang", products[index].name);
+            let newPrice = prompt("Edit Harga", products[index].price);
+            if (newName !== null && newPrice !== null) {
+                products[index].name = newName;
+                products[index].price = parseInt(newPrice);
+                loadProducts();
+            }
+        }
+
+        function addNewItem() {
+            let name = document.getElementById("new-name").value;
+            let price = document.getElementById("new-price").value;
+            let quantity = document.getElementById("new-quantity").value;
+            let image = document.getElementById("new-image").files[0];
+            
+            if (name && price && quantity && image) {
+                let reader = new FileReader();
+                reader.onload = function(event) {
+                    products.push({
+                        id: products.length + 1,
+                        name: name,
+                        price: parseInt(price),
+                        quantity: parseInt(quantity),
+                        img: event.target.result
+                    });
+                    loadProducts();
+                };
+                reader.readAsDataURL(image);
+            } else {
+                alert("Harap isi semua data!");
+            }
+        }
+
+        document.getElementById("goToPayment").addEventListener("click", function() {
+            let checkboxes = document.querySelectorAll("tbody input[type='checkbox']:checked");
+            let total = document.getElementById("total-price").innerText;
+
+            if (checkboxes.length === 0) {
+                alert("Silakan pilih menu terlebih dahulu!");
+            } else {
+                localStorage.setItem("totalPembayaran", total);
+                window.location.href = "Metode Pembayaran.HTML";
+            }
+        });
+
+        window.onload = loadProducts;
+    </script>
+</body>
+</html>

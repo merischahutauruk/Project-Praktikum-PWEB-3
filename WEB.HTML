@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="background_icon_styles.css">
+    <style>
+        body {
+            background-image: url('walpaper.png');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .input-container input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .edit, .delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 5px;
+        }
+        .delete {
+            color: red;
+        }
+        .edit {
+            color: green;
+        }
+
+        /* Responsif untuk layar kecil */
+        @media (max-width: 480px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="input-container">
+            <input type="text" id="taskInput" placeholder="Tambahkan Menu...">
+        </div>
+        <button id="addTask">➕ Tambah</button>
+        <ul id="taskList"></ul>
+        <button id="viewMenu">📜 Lihat Daftar Menu</button>
+    </div>
+    
+    <script src="script.js"></script>
+    
+    <script>
+        document.getElementById('addTask').addEventListener('click', function() {
+            let taskInput = document.getElementById('taskInput');
+            let taskText = taskInput.value.trim();
+            
+            if (taskText !== '') {
+                let li = document.createElement('li');
+
+                let textSpan = document.createElement('span');
+                textSpan.textContent = taskText;
+                
+                let editButton = document.createElement('button');
+                editButton.innerHTML = '✏️';
+                editButton.className = 'edit';
+                editButton.onclick = function() {
+                    let newText = prompt('Edit menu:', textSpan.textContent);
+                    if (newText) textSpan.textContent = newText;
+                };
+                
+                let deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '🗑️';
+                deleteButton.className = 'delete';
+                deleteButton.onclick = function() {
+                    if (confirm('Yakin ingin menghapus?')) {
+                        li.remove();
+                    }
+                };
+
+                li.appendChild(textSpan);
+                li.appendChild(editButton);
+                li.appendChild(deleteButton);
+                document.getElementById('taskList').appendChild(li);
+                
+                taskInput.value = '';
+            }
+        });
+
+        document.getElementById('viewMenu').addEventListener('click', function() {
+            window.location.href = "Daftar Menu.html";
+        });
+    </script>
+</body>
+</html>
